@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-export default function SearchBar({ handleisLoading }) {
+export default function SearchBar({ handleSearch }) {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputValue = e => {
     setInputValue(e.target.value);
-    handleisLoading(e.target.value);
+    handleSearch(e.target.value);
   };
 
   return (

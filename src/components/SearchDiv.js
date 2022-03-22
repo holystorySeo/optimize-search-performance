@@ -4,12 +4,12 @@ import SearchBar from './SearchBar';
 import SearchBtn from './SearchBtn';
 import axios from 'axios';
 
-export default function SearchDiv({ handleisLoading }) {
+export default function SearchDiv({ handleSearch }) {
   return (
     <WholeContainer>
       <div className="search-text" />
       <div className="search-section">
-        <SearchBar handleisLoading={handleisLoading} />
+        <SearchBar handleSearch={handleSearch} />
         <SearchBtn />
       </div>
     </WholeContainer>
