@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import SearchBar from './SearchBar';
 import SearchBtn from './SearchBtn';
-import axios from 'axios';
 
-export default function SearchDiv({ handleSearch }) {
+export default function SearchDiv({ handleSuggestion, handleArrowKey }) {
   return (
     <WholeContainer>
       <div className="search-text" />
       <div className="search-section">
-        <SearchBar handleSearch={handleSearch} />
+        <SearchBar
+          handleSuggestion={handleSuggestion}
+          handleArrowKey={handleArrowKey}
+        />
         <SearchBtn />
       </div>
     </WholeContainer>

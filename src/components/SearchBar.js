@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-export default function SearchBar({ handleSearch }) {
+export default function SearchBar({ handleSuggestion, handleArrowKey }) {
   const [inputValue, setInputValue] = useState('');
 
   const handleInputValue = e => {
     setInputValue(e.target.value);
-    handleSearch(e.target.value);
+    handleSuggestion(e.target.value);
   };
 
   return (
@@ -27,6 +27,7 @@ export default function SearchBar({ handleSearch }) {
         value={inputValue}
         placeholder="질환명을 입력해 주세요."
         onChange={handleInputValue}
+        onKeyDown={handleArrowKey}
       />
     </WholeContainer>
   );

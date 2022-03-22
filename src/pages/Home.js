@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import SearchDiv from '../components/SearchDiv';
@@ -7,25 +7,24 @@ import NoResult from '../components/NoResult';
 import SuggestionList from '../components/SuggestionList';
 
 export default function Home() {
+  const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [noResult, setNoResult] = useState(false);
-  const [searchItem, setSearchItem] = useState('');
   const [suggestionList, setSuggestionList] = useState([]);
+  const [isIdxSelected, setIsIdxSelected] = useState();
 
-  const handleSearch = inputValue => {
+  const handleSuggestion = inputValue => {
+    setInputValue(inputValue);
     if (inputValue === '') {
       setIsLoading(false);
       setShowResult(false);
     } else {
-      listSearch(inputValue);
+      suggestionSearch(inputValue);
     }
   };
 
-  const listSearch = async item => {
-    console.log(searchItem);
+  const suggestionSearch = async item => {
     setIsLoading(true);
-    setNoResult(false);
     setShowResult(false);
     await axios({
       method: 'get',
@@ -37,23 +36,61 @@ export default function Home() {
       setIsLoading(false);
       setShowResult(true);
       const searchData = res.data.slice(0, 7);
-      console.log(searchData);
       setSuggestionList(searchData);
     });
+  };
+
+  const handleArrowKey = e => {
+    const maxId = suggestionList.length;
+
+    if (e.key === 'ArrowDown') {
+      if (isIdxSelected === undefined) {
+        console.log(e.key);
+        // 맨처음 키보드 down 할 때 드랍다운 리스트 인덱스 0번을 선택한다.
+        setIsIdxSelected(0);
+      } else if (isIdxSelected !== undefined) {
+        // 두번째 키보드 down 부터
+        if (maxId === isIdxSelected + 1) {
+          // maxId와 isIdxSelected 값의 차이가 1일 경우 인덱스는 0을 설정한다.
+          setIsIdxSelected(0); // isIdxSelected의 값은 0이 된다.
+        } else {
+          // 나머지의 경우에는 idx를 1씩 증가시킨다.
+          setIsIdxSelected(isIdxSelected + 1);
+        }
+      }
+    }
+
+    if (e.key === 'ArrowUp') {
+      if (isIdxSelected === undefined) {
+        setIsIdxSelected(maxId - 1);
+      } else if (isIdxSelected !== undefined) {
+        if (isIdxSelected === 0) {
+          setIsIdxSelected(maxId - 1);
+        } else {
+          setIsIdxSelected(isIdxSelected - 1);
+        }
+      }
+    }
   };
 
   return (
     <WholeContainer>
       <div className="header"></div>
       <div className="main">
-        <SearchDiv handleSearch={handleSearch} />
+        <SearchDiv
+          handleSuggestion={handleSuggestion}
+          handleArrowKey={handleArrowKey}
+        />
         {isLoading ? (
           <Loading />
         ) : showResult ? (
           suggestionList.length === 0 ? (
             <NoResult />
           ) : (
-            <SuggestionList list={suggestionList} />
+            <SuggestionList
+              isIdxSelected={isIdxSelected}
+              list={suggestionList}
+            />
           )
         ) : (
           ''

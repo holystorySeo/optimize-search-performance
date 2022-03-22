@@ -1,12 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export default function suggestionList({ list }) {
+export default function suggestionList({ list, isIdxSelected }) {
   return (
     <WholeContainer>
       {list.map((el, idx) => {
         return (
-          <div className="list-section">
+          <div
+            className={`list-section ${
+              isIdxSelected === idx ? 'selected--focused' : ''
+            }`}
+            key={idx}
+          >
             <svg
               width="16"
               height="16"
@@ -50,10 +55,19 @@ const WholeContainer = styled.div`
   .list-section {
     display: flex;
     align-items: center;
+    padding-left: 10px;
     padding-top: 12px;
     padding-bottom: 12px;
     font-size: 1.125rem;
     font-weight: 400;
+
+    &:hover {
+      background: #e6e6e6;
+    }
+
+    &.selected--focused {
+      background: #e6e6e6;
+    }
   }
 
   .list-item {
