@@ -5,6 +5,8 @@ import SearchDiv from '../components/organisms/SearchDiv';
 import Loading from '../components/atoms/Loading';
 import NoResult from '../components/atoms/NoResult';
 import SuggestionList from '../components/molecules/SuggestionList';
+import setItemsTo from '../utils/setItemToLocalStorage';
+import getItemFrom from '../utils/getItemFromLocalStorage';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
@@ -18,6 +20,7 @@ export default function Home() {
     if (inputValue === '') {
       setIsLoading(false);
       setShowResult(false);
+      setIsIdxSelected();
     } else {
       suggestionSearch(inputValue);
     }
@@ -26,30 +29,43 @@ export default function Home() {
   const suggestionSearch = async item => {
     setIsLoading(true);
     setShowResult(false);
-    await axios({
-      method: 'get',
-      url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?name=${item}`,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then(res => {
+    const resultData = getItemFrom(item);
+
+    if (resultData === null) {
+      console.log('API호출');
+      await axios({
+        method: 'get',
+        url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?name=${item}`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }).then(res => {
+        setIsLoading(false);
+        setShowResult(true);
+        const searchData = res.data.slice(0, 7).map(el => {
+          return el.name;
+        });
+        setSuggestionList(searchData);
+        setItemsTo(item, searchData);
+      });
+    } else {
+      console.log('로컬스토리지 호출');
       setIsLoading(false);
       setShowResult(true);
-      const searchData = res.data.slice(0, 7);
-      setSuggestionList(searchData);
-    });
+      setSuggestionList(resultData);
+    }
   };
 
   const handleArrowKey = e => {
     const maxId = suggestionList.length;
 
     if (e.key === 'Enter') {
-      setInputValue(suggestionList[isIdxSelected].name);
+      setInputValue(suggestionList[isIdxSelected]);
       if (inputValue !== '') {
         setIsIdxSelected();
         setShowResult(false);
         window.location.replace(
-          `https://clinicaltrialskorea.com/studies?condition=${inputValue}`
+          `https://clinicaltrialskorea.com/studies?condition=${suggestionList[isIdxSelected]}`
         );
       }
     }
@@ -84,7 +100,7 @@ export default function Home() {
   };
 
   const handleSelected = idx => {
-    setInputValue(suggestionList[idx].name);
+    setInputValue(suggestionList[idx]);
     setIsIdxSelected();
     setShowResult(false);
   };

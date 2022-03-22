@@ -29,7 +29,7 @@ export default function SuggestionList({
               ></path>
             </svg>
             <div className="list-item" key={idx}>
-              {el.name}
+              {el}
             </div>
           </div>
         );
