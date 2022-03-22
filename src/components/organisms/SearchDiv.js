@@ -1,9 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import SearchBar from './SearchBar';
-import SearchBtn from './SearchBtn';
+import SearchBar from '../molecules/SearchBar';
+import SearchBtn from '../atoms/SearchBtn';
 
-export default function SearchDiv({ handleSuggestion, handleArrowKey }) {
+export default function SearchDiv({
+  handleSuggestion,
+  handleArrowKey,
+  inputValue,
+  handleSearch,
+}) {
   return (
     <WholeContainer>
       <div className="search-text" />
@@ -11,8 +16,9 @@ export default function SearchDiv({ handleSuggestion, handleArrowKey }) {
         <SearchBar
           handleSuggestion={handleSuggestion}
           handleArrowKey={handleArrowKey}
+          inputValue={inputValue}
         />
-        <SearchBtn />
+        <SearchBtn handleSearch={handleSearch} />
       </div>
     </WholeContainer>
   );

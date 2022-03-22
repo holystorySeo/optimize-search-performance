@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import SearchDiv from '../components/SearchDiv';
-import Loading from '../components/Loading';
-import NoResult from '../components/NoResult';
-import SuggestionList from '../components/SuggestionList';
+import SearchDiv from '../components/organisms/SearchDiv';
+import Loading from '../components/atoms/Loading';
+import NoResult from '../components/atoms/NoResult';
+import SuggestionList from '../components/molecules/SuggestionList';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
@@ -43,9 +43,19 @@ export default function Home() {
   const handleArrowKey = e => {
     const maxId = suggestionList.length;
 
+    if (e.key === 'Enter') {
+      setInputValue(suggestionList[isIdxSelected].name);
+      if (inputValue !== '') {
+        setIsIdxSelected();
+        setShowResult(false);
+        window.location.replace(
+          `https://clinicaltrialskorea.com/studies?condition=${inputValue}`
+        );
+      }
+    }
+
     if (e.key === 'ArrowDown') {
       if (isIdxSelected === undefined) {
-        console.log(e.key);
         // 맨처음 키보드 down 할 때 드랍다운 리스트 인덱스 0번을 선택한다.
         setIsIdxSelected(0);
       } else if (isIdxSelected !== undefined) {
@@ -73,6 +83,22 @@ export default function Home() {
     }
   };
 
+  const handleSelected = idx => {
+    setInputValue(suggestionList[idx].name);
+    setIsIdxSelected();
+    setShowResult(false);
+  };
+
+  const handleSearch = () => {
+    if (inputValue !== '') {
+      setIsIdxSelected();
+      setShowResult(false);
+      window.location.replace(
+        `https://clinicaltrialskorea.com/studies?condition=${inputValue}`
+      );
+    }
+  };
+
   return (
     <WholeContainer>
       <div className="header"></div>
@@ -80,6 +106,8 @@ export default function Home() {
         <SearchDiv
           handleSuggestion={handleSuggestion}
           handleArrowKey={handleArrowKey}
+          inputValue={inputValue}
+          handleSearch={handleSearch}
         />
         {isLoading ? (
           <Loading />
@@ -88,8 +116,9 @@ export default function Home() {
             <NoResult />
           ) : (
             <SuggestionList
-              isIdxSelected={isIdxSelected}
               list={suggestionList}
+              isIdxSelected={isIdxSelected}
+              handleSelected={handleSelected}
             />
           )
         ) : (

@@ -1,10 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export default function SearchBtn() {
+export default function SearchBtn({ handleSearch }) {
   return (
     <>
-      <WholeContainer />
+      <WholeContainer onClick={handleSearch} />
     </>
   );
 }

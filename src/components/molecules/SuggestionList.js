@@ -1,7 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export default function suggestionList({ list, isIdxSelected }) {
+export default function SuggestionList({
+  list,
+  isIdxSelected,
+  handleSelected,
+}) {
   return (
     <WholeContainer>
       {list.map((el, idx) => {
@@ -11,6 +15,7 @@ export default function suggestionList({ list, isIdxSelected }) {
               isIdxSelected === idx ? 'selected--focused' : ''
             }`}
             key={idx}
+            onClick={() => handleSelected(idx)}
           >
             <svg
               width="16"
@@ -43,6 +48,7 @@ const WholeContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 24px 24px 16px;
+  cursor: pointer;
 
   :before {
     content: '추천 검색어';

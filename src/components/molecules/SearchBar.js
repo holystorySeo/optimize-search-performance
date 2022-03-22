@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
-export default function SearchBar({ handleSuggestion, handleArrowKey }) {
-  const [inputValue, setInputValue] = useState('');
-
+export default function SearchBar({
+  handleSuggestion,
+  handleArrowKey,
+  inputValue,
+}) {
   const handleInputValue = e => {
-    setInputValue(e.target.value);
     handleSuggestion(e.target.value);
   };
 
