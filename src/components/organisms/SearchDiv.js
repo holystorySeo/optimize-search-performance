@@ -5,7 +5,7 @@ import SearchBtn from '../atoms/SearchBtn';
 
 export default function SearchDiv({
   handleSuggestion,
-  handleArrowKey,
+  handleKeyDown,
   inputValue,
   handleSearch,
 }) {
@@ -15,7 +15,7 @@ export default function SearchDiv({
       <div className="search-section">
         <SearchBar
           handleSuggestion={handleSuggestion}
-          handleArrowKey={handleArrowKey}
+          handleKeyDown={handleKeyDown}
           inputValue={inputValue}
         />
         <SearchBtn handleSearch={handleSearch} />

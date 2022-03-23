@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export default function SearchBar({
   handleSuggestion,
-  handleArrowKey,
+  handleKeyDown,
   inputValue,
 }) {
   const handleInputValue = e => {
@@ -28,7 +28,7 @@ export default function SearchBar({
         value={inputValue}
         placeholder="질환명을 입력해 주세요."
         onChange={handleInputValue}
-        onKeyDown={handleArrowKey}
+        onKeyDown={handleKeyDown}
       />
     </WholeContainer>
   );

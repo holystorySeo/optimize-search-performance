@@ -7,21 +7,25 @@ import NoResult from '../components/atoms/NoResult';
 import SuggestionList from '../components/molecules/SuggestionList';
 import setItemsTo from '../utils/setItemToLocalStorage';
 import getItemFrom from '../utils/getItemFromLocalStorage';
+import intervalCall from '../utils/intervalCallPrevent';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [suggestionList, setSuggestionList] = useState([]);
-  const [isIdxSelected, setIsIdxSelected] = useState();
+  const [isIdxSelected, setIsIdxSelected] = useState(-2);
+  const intervalCall1000 = intervalCall(1000);
 
   const handleSuggestion = inputValue => {
-    setInputValue(inputValue);
     if (inputValue === '') {
+      console.log('여기1');
+      setInputValue(inputValue);
       setIsLoading(false);
       setShowResult(false);
-      setIsIdxSelected();
+      setIsIdxSelected(-2);
     } else {
+      setInputValue(inputValue);
       suggestionSearch(inputValue);
     }
   };
@@ -32,7 +36,6 @@ export default function Home() {
     const resultData = getItemFrom(item);
 
     if (resultData === null) {
-      console.log('API호출');
       await axios({
         method: 'get',
         url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?name=${item}`,
@@ -49,65 +52,74 @@ export default function Home() {
         setItemsTo(item, searchData);
       });
     } else {
-      console.log('로컬스토리지 호출');
       setIsLoading(false);
       setShowResult(true);
       setSuggestionList(resultData);
     }
   };
 
-  const handleArrowKey = e => {
-    const maxId = suggestionList.length;
+  const handleKeyDown = e => {
+    if (e.key === 'Backspace') {
+      setIsIdxSelected(-2);
+    }
 
     if (e.key === 'Enter') {
-      setInputValue(suggestionList[isIdxSelected]);
-      if (inputValue !== '') {
-        setIsIdxSelected();
-        setShowResult(false);
-        window.location.replace(
-          `https://clinicaltrialskorea.com/studies?condition=${suggestionList[isIdxSelected]}`
-        );
+      if (isIdxSelected === -2) {
+        if (inputValue !== '') {
+          setIsIdxSelected(-2);
+          setShowResult(false);
+          window.location.replace(
+            `https://clinicaltrialskorea.com/studies?condition=${suggestionList[isIdxSelected]}`
+          );
+        }
+      } else {
+        setInputValue(suggestionList[isIdxSelected]);
+        if (inputValue !== '') {
+          setIsIdxSelected(-2);
+          setShowResult(false);
+          window.location.replace(
+            `https://clinicaltrialskorea.com/studies?condition=${suggestionList[isIdxSelected]}`
+          );
+        }
       }
     }
 
     if (e.key === 'ArrowDown') {
-      if (isIdxSelected === undefined) {
-        // 맨처음 키보드 down 할 때 드랍다운 리스트 인덱스 0번을 선택한다.
-        setIsIdxSelected(0);
-      } else if (isIdxSelected !== undefined) {
-        // 두번째 키보드 down 부터
-        if (maxId === isIdxSelected + 1) {
-          // maxId와 isIdxSelected 값의 차이가 1일 경우 인덱스는 0을 설정한다.
-          setIsIdxSelected(0); // isIdxSelected의 값은 0이 된다.
-        } else {
-          // 나머지의 경우에는 idx를 1씩 증가시킨다.
+      if (suggestionList.length === isIdxSelected + 1) {
+        // maxId와 isIdxSelected 값의 차이가 1일 경우 인덱스는 0을 설정한다.
+        setIsIdxSelected(0); // isIdxSelected의 값은 0이 된다.
+      } else if (isIdxSelected === -2) {
+        // ArrowDown 최초 두번 실행 오류 잡기 위해 분기처리
+        intervalCall1000(() => {
+          console.log('여기2');
           setIsIdxSelected(isIdxSelected + 1);
-        }
+        });
+      } else {
+        // 나머지의 경우에는 idx를 1씩 증가시킨다.
+        setIsIdxSelected(isIdxSelected + 1);
       }
     }
 
     if (e.key === 'ArrowUp') {
-      if (isIdxSelected === undefined) {
-        setIsIdxSelected(maxId - 1);
-      } else if (isIdxSelected !== undefined) {
-        if (isIdxSelected === 0) {
-          setIsIdxSelected(maxId - 1);
-        } else {
-          setIsIdxSelected(isIdxSelected - 1);
-        }
+      if (isIdxSelected === 0) {
+        setIsIdxSelected(suggestionList.length - 1);
+      } else if (isIdxSelected === -2) {
+        return false;
+      } else {
+        setIsIdxSelected(isIdxSelected - 1);
       }
     }
   };
 
   const handleSelected = idx => {
     setInputValue(suggestionList[idx]);
-    setIsIdxSelected();
+    setIsIdxSelected(-2);
     setShowResult(false);
   };
 
   const handleSearch = () => {
     if (inputValue !== '') {
-      setIsIdxSelected();
+      setIsIdxSelected(-2);
       setShowResult(false);
       window.location.replace(
         `https://clinicaltrialskorea.com/studies?condition=${inputValue}`
@@ -121,7 +133,7 @@ export default function Home() {
       <div className="main">
         <SearchDiv
           handleSuggestion={handleSuggestion}
-          handleArrowKey={handleArrowKey}
+          handleKeyDown={handleKeyDown}
           inputValue={inputValue}
           handleSearch={handleSearch}
         />
