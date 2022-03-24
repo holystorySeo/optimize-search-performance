@@ -14,13 +14,10 @@ import { debounce } from 'lodash';
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const initShowResult = useSelector(state => state.searching.showResult);
-  const [showResult, setShowResult] = useState(initShowResult);
+  const [showResult, setShowResult] = useState(false);
   const suggestionList = useSelector(state => state.searching.suggestionList);
   const selectedIdx = useSelector(state => state.searching.selectedIdx);
   const dispatch = useDispatch();
-
-  console.log(`inputValue=${inputValue}, showResult=${showResult}`);
 
   const exeSuggestionSearch = useCallback(
     debounce((item) =>
@@ -33,7 +30,7 @@ export default function Home() {
   };
 
   const suggestionSearch = async item => {
-    if(item === '') {
+    if(item === '') { // 검색어를 모두 삭제했을 경우는 초기화
       setIsLoading(false);
       setShowResult(false);
       dispatch(insertIdx(-2));

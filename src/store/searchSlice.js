@@ -4,7 +4,6 @@ const initialState = {
   inputValue: '',
   selectedIdx: -2,
   suggestionList: [],
-  showResult: false,
 };
 
 const searchSlice = createSlice({
