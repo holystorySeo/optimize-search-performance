@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateIdx, insertIdx, updateSuggestionList } from '../store/searchSlice';
 import styled from 'styled-components';
@@ -9,53 +9,60 @@ import NoResult from '../components/atoms/NoResult';
 import SuggestionList from '../components/molecules/SuggestionList';
 import setItemsTo from '../utils/setItemToLocalStorage';
 import getItemFrom from '../utils/getItemFromLocalStorage';
+import { debounce } from 'lodash';
 
 export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const initShowResult = useSelector(state => state.searching.showResult);
+  const [showResult, setShowResult] = useState(initShowResult);
   const suggestionList = useSelector(state => state.searching.suggestionList);
   const selectedIdx = useSelector(state => state.searching.selectedIdx);
   const dispatch = useDispatch();
 
+  console.log(`inputValue=${inputValue}, showResult=${showResult}`);
+
+  const exeSuggestionSearch = useCallback(
+    debounce((item) =>
+      suggestionSearch(item), 500), []
+  );
+
   const handleSuggestion = inputValue => {
-    if (inputValue === '') {
       setInputValue(inputValue);
+      exeSuggestionSearch(inputValue);
+  };
+
+  const suggestionSearch = async item => {
+    if(item === '') {
       setIsLoading(false);
       setShowResult(false);
       dispatch(insertIdx(-2));
     } else {
-      setInputValue(inputValue);
-      suggestionSearch(inputValue);
-    }
-  };
+      setIsLoading(true);
+      const resultData = getItemFrom(item);
 
-  const suggestionSearch = async item => {
-    setIsLoading(true);
-    setShowResult(false);
-    const resultData = getItemFrom(item);
-
-    if (resultData === null) {
-      await axios({
-        method: 'get',
-        url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?name=${item}`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then(res => {
+      if (resultData === null) {
+        await axios({
+          method: 'get',
+          url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?name=${item}`,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }).then(res => {
+          setIsLoading(false);
+          setShowResult(true);
+          const searchData = res.data.slice(0, 7).map(el => {
+            return el.name;
+          });
+          dispatch(updateSuggestionList(searchData));
+          setItemsTo(item, searchData);
+        });
+      } else {
         setIsLoading(false);
         setShowResult(true);
-        const searchData = res.data.slice(0, 7).map(el => {
-          return el.name;
-        });
-        dispatch(updateSuggestionList(searchData));
-        setItemsTo(item, searchData);
-      });
-    } else {
-      setIsLoading(false);
-      setShowResult(true);
-      dispatch(updateSuggestionList(resultData));
+        dispatch(updateSuggestionList(resultData));
 
+      }
     }
   };
 

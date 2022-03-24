@@ -7,7 +7,7 @@ export default function SearchBar({
   inputValue,
 }) {
   const handleInputValue = e => {
-    handleSuggestion(e.target.value);
+      handleSuggestion(e.target.value);
   };
 
   return (
