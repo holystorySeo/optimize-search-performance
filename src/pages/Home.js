@@ -15,6 +15,7 @@ export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  
   const suggestionList = useSelector(state => state.searching.suggestionList);
   const selectedIdx = useSelector(state => state.searching.selectedIdx);
   const dispatch = useDispatch();
