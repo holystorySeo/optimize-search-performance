@@ -1,18 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useSelector } from 'react-redux';
 
 export default function SuggestionList({
   list,
-  isIdxSelected,
   handleSelected,
 }) {
+  const selectedIdx = useSelector(state => state.searching.selectedIdx);
+  console.log(selectedIdx);
   return (
     <WholeContainer>
       {list.map((el, idx) => {
         return (
           <div
             className={`list-section ${
-              isIdxSelected === idx ? 'selected--focused' : ''
+              selectedIdx === idx ? 'selected--focused' : ''
             }`}
             key={idx}
             onClick={() => handleSelected(idx)}
@@ -41,7 +43,7 @@ export default function SuggestionList({
 const WholeContainer = styled.div`
   width: 100%;
   max-width: 700px;
-  max-height: 350px;
+  max-height: 358px;
   margin-top: 8px;
   border-radius: 20px;
   background-color: #ffffff;
@@ -73,6 +75,7 @@ const WholeContainer = styled.div`
 
     &.selected--focused {
       background: #e6e6e6;
+      border-radius: 10px;
     }
   }
 
