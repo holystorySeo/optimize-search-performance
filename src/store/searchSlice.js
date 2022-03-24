@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   selectedIdx: -2,
+  suggestionList: [],
 };
 
 const searchSlice = createSlice({
@@ -15,12 +16,16 @@ const searchSlice = createSlice({
     insertIdx(state, action) {
       state.selectedIdx = action.payload;
     },
+    updateSuggestionList(state, action) {
+      state.suggestionList = [...action.payload];
+    }
   }
 })
 
 export const {
   updateIdx,
   insertIdx,
+  updateSuggestionList,
 } = searchSlice.actions;
 export default searchSlice.reducer;
 

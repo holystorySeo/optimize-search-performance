@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateIdx, insertIdx } from '../store/searchSlice';
+import { updateIdx, insertIdx, updateSuggestionList } from '../store/searchSlice';
 import styled from 'styled-components';
 import axios from 'axios';
 import SearchDiv from '../components/organisms/SearchDiv';
@@ -14,7 +14,7 @@ export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [suggestionList, setSuggestionList] = useState([]);
+  const suggestionList = useSelector(state => state.searching.suggestionList);
   const selectedIdx = useSelector(state => state.searching.selectedIdx);
   const dispatch = useDispatch();
 
@@ -48,13 +48,14 @@ export default function Home() {
         const searchData = res.data.slice(0, 7).map(el => {
           return el.name;
         });
-        setSuggestionList(searchData);
+        dispatch(updateSuggestionList(searchData));
         setItemsTo(item, searchData);
       });
     } else {
       setIsLoading(false);
       setShowResult(true);
-      setSuggestionList(resultData);
+      dispatch(updateSuggestionList(resultData));
+
     }
   };
 
@@ -139,10 +140,7 @@ export default function Home() {
           suggestionList.length === 0 ? (
             <NoResult />
           ) : (
-            <SuggestionList
-              list={suggestionList}
-              // selectedIdx={selectedIdx}
-              handleSelected={handleSelected}
+            <SuggestionList handleSelected={handleSelected}
             />
           )
         ) : (

@@ -2,12 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
-export default function SuggestionList({
-  list,
-  handleSelected,
-}) {
-  const selectedIdx = useSelector(state => state.searching.selectedIdx);
-  console.log(selectedIdx);
+export default function SuggestionList({ handleSelected }) {
+  const list = useSelector(state => state.searching.suggestionList); // 추천어 리스트
+  const selectedIdx = useSelector(state => state.searching.selectedIdx); //추천어 인덱스
+
   return (
     <WholeContainer>
       {list.map((el, idx) => {
