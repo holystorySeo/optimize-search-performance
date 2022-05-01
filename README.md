@@ -1,4 +1,3 @@
-# wanted-codestates-project-10
 # 휴먼스케이프
 <img src="https://user-images.githubusercontent.com/87353284/159841659-f7caea4e-7f3f-4731-8d3a-92ac3efc10de.gif" width="50%">
 
