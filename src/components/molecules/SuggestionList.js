@@ -49,6 +49,7 @@ const WholeContainer = styled.div`
   flex-direction: column;
   padding: 24px 24px 16px;
   cursor: pointer;
+  border: 1px solid black;
 
   :before {
     content: '추천 검색어';
