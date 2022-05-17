@@ -1,6 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateIdx, insertIdx, updateSuggestionList } from '../store/searchSlice';
+import {
+  updateIdx,
+  insertIdx,
+  updateSuggestionList,
+} from '../store/searchSlice';
 import styled from 'styled-components';
 import axios from 'axios';
 import SearchDiv from '../components/organisms/SearchDiv';
@@ -15,23 +19,24 @@ export default function Home() {
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  
-  const suggestionList = useSelector(state => state.searching.suggestionList);
-  const selectedIdx = useSelector(state => state.searching.selectedIdx);
+
+  const suggestionList = useSelector((state) => state.searching.suggestionList);
+  const selectedIdx = useSelector((state) => state.searching.selectedIdx);
   const dispatch = useDispatch();
 
   const exeSuggestionSearch = useCallback(
-    debounce((item) =>
-      suggestionSearch(item), 500), []
+    debounce((item) => suggestionSearch(item), 500),
+    []
   );
 
-  const handleSuggestion = inputValue => {
-      setInputValue(inputValue);
-      exeSuggestionSearch(inputValue);
+  const handleSuggestion = (inputValue) => {
+    setInputValue(inputValue);
+    exeSuggestionSearch(inputValue);
   };
 
-  const suggestionSearch = async item => {
-    if(item === '') { // 검색어를 모두 삭제했을 경우는 초기화
+  const suggestionSearch = async (item) => {
+    if (item === '') {
+      // 검색어를 모두 삭제했을 경우는 초기화
       setIsLoading(false);
       setShowResult(false);
       dispatch(insertIdx(-2));
@@ -42,14 +47,14 @@ export default function Home() {
       if (resultData === null) {
         await axios({
           method: 'get',
-          url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?name=${item}`,
+          url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?format=json&name=${item}`,
           headers: {
             'Content-Type': 'application/json',
           },
-        }).then(res => {
+        }).then((res) => {
           setIsLoading(false);
           setShowResult(true);
-          const searchData = res.data.slice(0, 7).map(el => {
+          const searchData = res.data.slice(0, 7).map((el) => {
             return el.name;
           });
           dispatch(updateSuggestionList(searchData));
@@ -59,12 +64,11 @@ export default function Home() {
         setIsLoading(false);
         setShowResult(true);
         dispatch(updateSuggestionList(resultData));
-
       }
     }
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Backspace') {
       dispatch(insertIdx(-2));
     }
@@ -72,7 +76,6 @@ export default function Home() {
     if (e.key === 'Enter') {
       if (selectedIdx === -2) {
         if (inputValue !== '') {
-  
           dispatch(insertIdx(-2));
           setShowResult(false);
           window.location.replace(
@@ -82,7 +85,6 @@ export default function Home() {
       } else {
         setInputValue(suggestionList[selectedIdx]);
         if (inputValue !== '') {
-  
           dispatch(insertIdx(-2));
           setShowResult(false);
           window.location.replace(
@@ -104,17 +106,17 @@ export default function Home() {
 
     if (e.key === 'ArrowUp') {
       if (selectedIdx === 0) {
-        dispatch(insertIdx(suggestionList.length - 1))
+        dispatch(insertIdx(suggestionList.length - 1));
       } else if (selectedIdx === -2) {
         return false;
       } else {
-        dispatch(insertIdx(selectedIdx - 1))
+        dispatch(insertIdx(selectedIdx - 1));
       }
     }
   };
 
-  const handleSelected = idx => {
-    setInputValue(suggestionList[idx])
+  const handleSelected = (idx) => {
+    setInputValue(suggestionList[idx]);
     dispatch(insertIdx(-2));
     setShowResult(false);
   };
@@ -145,8 +147,7 @@ export default function Home() {
           suggestionList.length === 0 ? (
             <NoResult />
           ) : (
-            <SuggestionList handleSelected={handleSelected}
-            />
+            <SuggestionList handleSelected={handleSelected} />
           )
         ) : (
           ''
