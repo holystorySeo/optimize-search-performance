@@ -1,11 +1,10 @@
-# 휴먼스케이프
+# 검색어 추천이 있는 검색창 만들기
 <img src="https://user-images.githubusercontent.com/87353284/159841659-f7caea4e-7f3f-4731-8d3a-92ac3efc10de.gif" width="50%">
 
 
 ## 프로젝트 소개
 - 검색어 추천이 있는 검색창 만들기
 - 한국임상정보(https://clinicaltrialskorea.com/) 검색 영역 클론
-- 현재 검색을 위한 API 접근 불가로 검색어 리스트 요청 불가(22.5.1 확인) 
 
 ## 배포 링크
 [https://wanted-codestates-project-9.vercel.app/](https://wanted-codestates-project-9.vercel.app/)
@@ -54,6 +53,75 @@
   - 원자(로딩, 검색결과 없음, 검색 버튼), 분자(검색창, 추천어 리시트), 유기체(검색 영역)<br>
     
     <img src="https://user-images.githubusercontent.com/87353284/159987217-254ae5bf-1cfe-4bce-8584-55e67cd768e4.png">
+
+## 에러 핸들링
+1. API 서버 환경 설정 변화에 따른 데이터 호출 불가 문제
+  - 정상 작동하던 검색 기능 아래 오류 메세지 발생, CORS 에러
+   <img src="https://user-images.githubusercontent.com/87353284/168730705-cfb214b9-1d5d-4abe-aa58-6f708e0605de.png" width="80%">
+   
+   <img src="https://user-images.githubusercontent.com/87353284/168731285-7c1e5816-4f03-4e9c-8c21-498b836c6561.png">
+   
+   <img src="https://user-images.githubusercontent.com/87353284/168731398-a2f0ed55-7d1d-4f98-b0ce-15000e7116c8.png" width="50%">
+   
+   #### 해결시도1) http-proxy-middleware 활용 (해결안됨)
+   - src 폴더에 setupProxy.js 작성
+   ```jsx
+   const express = require('express');
+   const { createProxyMiddleware } = require('http-proxy-middleware');
+   
+   const app = express();
+
+   module.exports = function(app){
+   app.use(
+     createProxyMiddleware('/api', {
+        target: 'https://api.clinicaltrialskorea.com/',
+        changeOrigin: true
+       })
+      )
+    };
+    
+    
+   app.listen(3000);
+   ```
+   - axios 요청시에 /api로 호출되는 부분이 proxy 서버로 설정된다고 함
+   ```jsx
+    await axios({
+          method: 'get',
+          url: `/api/v1/search-conditions/?format=json&name=${item}`,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+   ```
+   - 동일한 404 not found 메세지 발생하여 해결되지 않음
+
+   #### 해결시도2) herokuapp(헤로쿠)에 proxy 서버 만들어서 활용(해결)
+   [헤로쿠 proxy 서버 주소 생성](https://nhj12311.tistory.com/278)
+   - defaultClient.js
+   ```jsx
+   import axios from 'axios';
+
+   const defaultClient = axios.create({
+   baseURL:
+    'https://daground-proxy.herokuapp.com/https://api.clinicaltrialskorea.com',
+    });
+
+   export default defaultClient;
+   ```
+   
+   - Home.js axios 호출 영역
+   ```jsx
+   import axios from '../utils/defaultClient';
+   
+    await axios({
+    method: 'get',
+    url: `/api/v1/search-conditions/?format=json&name=${item}`,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+   ```
+   
+   - 정상 작동
+   <img src="https://user-images.githubusercontent.com/87353284/168737025-f464facd-f10f-4ab5-9dd7-44f6867a7775.gif" width="50%">
 
 ## 어려웠던 점
 - 맥북 키보드 이동 2회 중복 실행
