@@ -6,8 +6,8 @@ export default function SearchBar({
   handleKeyDown,
   inputValue,
 }) {
-  const handleInputValue = e => {
-      handleSuggestion(e.target.value);
+  const handleInputValue = (e) => {
+    handleSuggestion(e.target.value);
   };
 
   return (
@@ -24,6 +24,7 @@ export default function SearchBar({
         ></path>
       </svg>
       <input
+        spellcheck="false"
         type="text"
         value={inputValue}
         placeholder="질환명을 입력해 주세요."
