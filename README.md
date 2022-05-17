@@ -1,4 +1,3 @@
-# wanted-codestates-project-9
 # 휴먼스케이프
 <img src="https://user-images.githubusercontent.com/87353284/159841659-f7caea4e-7f3f-4731-8d3a-92ac3efc10de.gif" width="50%">
 
@@ -6,6 +5,7 @@
 ## 프로젝트 소개
 - 검색어 추천이 있는 검색창 만들기
 - 한국임상정보(https://clinicaltrialskorea.com/) 검색 영역 클론
+- 현재 검색을 위한 API 접근 불가로 검색어 리스트 요청 불가(22.5.1 확인) 
 
 ## 배포 링크
 [https://wanted-codestates-project-9.vercel.app/](https://wanted-codestates-project-9.vercel.app/)
