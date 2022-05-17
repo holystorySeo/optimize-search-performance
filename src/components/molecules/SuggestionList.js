@@ -3,8 +3,8 @@ import styled from 'styled-components';
 import { useSelector } from 'react-redux';
 
 export default function SuggestionList({ handleSelected }) {
-  const list = useSelector(state => state.searching.suggestionList); // 추천어 리스트
-  const selectedIdx = useSelector(state => state.searching.selectedIdx); //추천어 인덱스
+  const list = useSelector((state) => state.searching.suggestionList); // 추천어 리스트
+  const selectedIdx = useSelector((state) => state.searching.selectedIdx); //추천어 인덱스
 
   return (
     <WholeContainer>
@@ -49,7 +49,6 @@ const WholeContainer = styled.div`
   flex-direction: column;
   padding: 24px 24px 16px;
   cursor: pointer;
-  border: 1px solid black;
 
   :before {
     content: '추천 검색어';

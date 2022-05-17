@@ -6,7 +6,7 @@ import {
   updateSuggestionList,
 } from '../store/searchSlice';
 import styled from 'styled-components';
-import axios from 'axios';
+import axios from '../utils/defaultClient';
 import SearchDiv from '../components/organisms/SearchDiv';
 import Loading from '../components/atoms/Loading';
 import NoResult from '../components/atoms/NoResult';
@@ -20,21 +20,21 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
-  const suggestionList = useSelector(state => state.searching.suggestionList);
-  const selectedIdx = useSelector(state => state.searching.selectedIdx);
+  const suggestionList = useSelector((state) => state.searching.suggestionList);
+  const selectedIdx = useSelector((state) => state.searching.selectedIdx);
   const dispatch = useDispatch();
 
   const exeSuggestionSearch = useCallback(
-    debounce(item => suggestionSearch(item), 500),
+    debounce((item) => suggestionSearch(item), 500),
     []
   );
 
-  const handleSuggestion = inputValue => {
+  const handleSuggestion = (inputValue) => {
     setInputValue(inputValue);
     exeSuggestionSearch(inputValue);
   };
 
-  const suggestionSearch = async item => {
+  const suggestionSearch = async (item) => {
     if (item === '') {
       // 검색어를 모두 삭제했을 경우는 초기화
       setIsLoading(false);
@@ -47,15 +47,14 @@ export default function Home() {
       if (resultData === null) {
         await axios({
           method: 'get',
-          url: `https://api.clinicaltrialskorea.com/api/v1/search-conditions/?format=json&name=${item}`,
+          url: `/api/v1/search-conditions/?format=json&name=${item}`,
           headers: {
             'Content-Type': 'application/json',
           },
-        }).then(res => {
-          console.log(res);
+        }).then((res) => {
           setIsLoading(false);
           setShowResult(true);
-          const searchData = res.data.slice(0, 7).map(el => {
+          const searchData = res.data.slice(0, 7).map((el) => {
             return el.name;
           });
           dispatch(updateSuggestionList(searchData));
@@ -69,7 +68,7 @@ export default function Home() {
     }
   };
 
-  const handleKeyDown = e => {
+  const handleKeyDown = (e) => {
     if (e.key === 'Backspace') {
       dispatch(insertIdx(-2));
     }
@@ -116,7 +115,7 @@ export default function Home() {
     }
   };
 
-  const handleSelected = idx => {
+  const handleSelected = (idx) => {
     setInputValue(suggestionList[idx]);
     dispatch(insertIdx(-2));
     setShowResult(false);
