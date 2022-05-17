@@ -7,7 +7,7 @@
 - 한국임상정보(https://clinicaltrialskorea.com/) 검색 영역 클론
 
 ## 배포 링크
-[https://wanted-codestates-project-9.vercel.app/](https://wanted-codestates-project-9.vercel.app/)
+[https://optimize-search-performance.vercel.app/](https://optimize-search-performance.vercel.app/)
 
 ## 개발 환경
   |기술 스택|실행 방법|의존성 모듈|
